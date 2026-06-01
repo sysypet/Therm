@@ -1,0 +1,13 @@
+# Verziózott artifact fájlok
+*_[0-9]*.[0-9]*.[0-9]*.ino
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+build/
+dist/
