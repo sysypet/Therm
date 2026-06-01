@@ -8,7 +8,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>  // WATCHDOG: Task WDT header
 
-#define FW_VERSION "2.3.11"  // Firmware verzió – automatikus keresés 3 egymásutáni hiányzás után
+#define FW_VERSION "2.3.12"  // Firmware verzió – automatikus keresés 3 egymásutáni hiányzás után
 
 #define RELAY_HEAT_PIN 5   // Fűtés relay
 #define RELAY_COOL_PIN 6   // Hűtés relay
@@ -353,10 +353,10 @@ void handleWifiConfig() {
   String savedPass = preferences.getString("password", "");
   preferences.end();
 
-  String modeLabel = relayInverted ? "H&u0171t&eacute;s" : "F&u0171t&eacute;s";
+  String modeLabel = relayInverted ? "Hűtés" : "Fűtés";
   String modeBg    = relayInverted ? "#3cc8ff" : "#ff5e62";
   String html = "<!DOCTYPE html><html lang='hu'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>";
-  html += "<title>Be&aacute;ll&iacute;t&aacute;sok</title><style>";
+  html += "<title>Beállítások</title><style>";
   html += "body{font-family:-apple-system,sans-serif;background:#121214;color:#fff;padding:20px;text-align:center;}";
   html += ".container{max-width:360px;margin:40px auto;background:#1a1a1e;padding:25px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.5);}";
   html += "h2{color:#a0a0a5;margin-bottom:5px;font-size:1.4rem;}";
@@ -379,20 +379,20 @@ void handleWifiConfig() {
   html += ".sensor-name-input{flex:1;min-width:80px;padding:6px 10px;background:#121214;border:1px solid #444;color:#fff;border-radius:6px;font-size:0.9rem;}";
   html += ".sensor-name-input:focus{outline:none;border-color:#00d2ff;}";
   html += "input[type='radio']{width:20px;height:20px;accent-color:#00d2ff;cursor:pointer;flex-shrink:0;}";
-  html += "</style></head><body><div class='container'><h2>Be&aacute;ll&iacute;t&aacute;sok</h2>";
+  html += "</style></head><body><div class='container'><h2>Beállítások</h2>";
   html += "<div class='sensor-box'><h3 style='text-align:center;'>Eszköz neve</h3>";
   html += "<div class='input-group'>";
   html += "<input type='text' id='deviceNameInput' maxlength='24' value='" + unitName + "' placeholder='pl: Nappali' style='background:#232329;border:1px solid #444;margin-top:0;'>";
   html += "</div>";
   html += "<div style='margin-top:12px;text-align:center;'>";
-  html += "<div style='font-size:0.8rem;color:#a0a0a5;margin-bottom:8px;'>El&eacute;rhet&#337; ezen a néven:</div>";
+  html += "<div style='font-size:0.8rem;color:#a0a0a5;margin-bottom:8px;'>Elérhető ezen a néven:</div>";
   html += "<div style='display:flex;align-items:center;gap:8px;padding:12px;justify-content:center;background:#2e2e36;border:1px solid #484850;border-radius:12px;'>";
   html += "<span style='font-size:1rem;color:#00d2ff;word-break:break-all;text-align:center;' id='deviceNameDisplay'>" + unitName + ".local</span>";
   html += "</div>";
   html += "</div>";
   html += "</div>";
 
-  html += "<div class='sensor-box'><h3 style='display:flex;justify-content:space-between;align-items:center;'>H&#337;m&eacute;r&#337;k (max 4)<span style='font-size:0.72rem;font-weight:400;color:#f0c040;letter-spacing:0.5px;text-transform:none;'>Dallas DS18B20</span></h3>";
+  html += "<div class='sensor-box'><h3 style='display:flex;justify-content:space-between;align-items:center;'>Hőmérők (max 4)<span style='font-size:0.72rem;font-weight:400;color:#f0c040;letter-spacing:0.5px;text-transform:none;'>Dallas DS18B20</span></h3>";
 
   html += "<button type='button' id='searchSensorBtn' onclick='searchSensors()' style='margin-top:0;background:#00d2ff;color:#121214;width:100%;padding:12px;border:none;font-weight:bold;border-radius:8px;cursor:pointer;font-size:1rem;'>Hőmérők keresése</button>";
   html += "<div id='sensorSearchStatus' style='font-size:0.8rem;color:#707075;margin-top:8px;text-align:center;'></div>";
@@ -453,18 +453,18 @@ void handleWifiConfig() {
   html += "<div style='display:flex; gap:10px; margin-bottom:15px;'>";
   html += "<button type='button' id='modeToggleBtn' onclick='toggleMode()' style='margin-top:0; background:" + modeBg + "; color:#fff; flex:1;'>" + modeLabel + "</button>";
   html += "</div>";
-  html += "<div class='input-group'><label>Hiszter&eacute;zis (&deg;C)</label>";
+  html += "<div class='input-group'><label>Hiszterézis (°C)</label>";
   html += "<input type='text' id='hysteresisInput' value='" + String(hysteresis, 1) + "' style='text-align:center;'>";
   html += "</div></div>";
 
   html += "<div class='sensor-box'><h3>Wi-Fi Hálózat</h3>";
-  html += "<div class='info-text'>V&aacute;lassz h&aacute;l&oacute;zatot vagy add meg k&eacute;zzel.</div>";
-  html += "<div class='network-list' id='networks'><div class='scanning'>H&aacute;l&oacute;zatok keres&eacute;se...</div></div>";
-  html += "<div class='input-group'><label>H&aacute;l&oacute;zat neve (SSID)</label><input type='text' id='ssid' value='" + savedSsid + "'></div>";
-  html += "<div class='input-group'><label>Jelsz&oacute;</label><input type='password' id='password' value='" + savedPass + "'></div>";
+  html += "<div class='info-text'>Válassz hálózatot vagy add meg kézzel.</div>";
+  html += "<div class='network-list' id='networks'><div class='scanning'>Hálózatok keresése...</div></div>";
+  html += "<div class='input-group'><label>Hálózat neve (SSID)</label><input type='text' id='ssid' value='" + savedSsid + "'></div>";
+  html += "<div class='input-group'><label>Jelszó</label><input type='password' id='password' value='" + savedPass + "'></div>";
   html += "</div>";
 
-  html += "<button type='button' onclick='saveConfig()' style='background:#1a7a4a;color:#fff;margin-bottom:10px;'>Ment&eacute;s és Újraindítás</button>";
+  html += "<button type='button' onclick='saveConfig()' style='background:#1a7a4a;color:#fff;margin-bottom:10px;'>Mentés és Újraindítás</button>";
   html += "<button type='button' onclick=\"location.href='/'\" style='background:#2e2e36;color:#d0d0d5;margin-top:5px;'>Mégse</button>";
 
   html += "</div>";
@@ -472,7 +472,7 @@ void handleWifiConfig() {
   html += "<script>";
   html += "let selectedSsid='';";
   html += "function scan(){fetch('/get-networks').then(r=>r.json()).then(data=>{";
-  html += "let s=document.getElementById('networks');if(data.length==0){s.innerHTML='<div class=\"scanning\">Nem tal&aacute;lhat&oacute; h&aacute;l&oacute;zat. Keres&eacute;s...</div>';return;}";
+  html += "let s=document.getElementById('networks');if(data.length==0){s.innerHTML='<div class=\"scanning\">Nem található hálózat. Keresés...</div>';return;}";
   html += "let html='';data.forEach(n=>{";
   html += "let isSaved=(n.ssid==='" + savedSsid + "');";
   html += "let badge=isSaved?'<span class=\"saved-badge\">MENTETT</span>':'';";
@@ -509,7 +509,7 @@ void handleWifiConfig() {
   html += "}).catch(()=>{alert('Hiba a mentés során!');});}";
   html += "</script></body></html>";
 
-  server.send(200, "text/html", html);
+  server.send(200, "text/html; charset=utf-8", html);
 }
 
 void handleSearchSensors() {
