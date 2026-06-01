@@ -8,7 +8,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>  // WATCHDOG: Task WDT header
 
-#define FW_VERSION "2.3.10"  // Firmware verzió – automatikus keresés 3 egymásutáni hiányzás után
+#define FW_VERSION "2.3.11"  // Firmware verzió – automatikus keresés 3 egymásutáni hiányzás után
 
 #define RELAY_HEAT_PIN 5   // Fűtés relay
 #define RELAY_COOL_PIN 6   // Hűtés relay
