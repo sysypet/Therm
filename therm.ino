@@ -742,7 +742,7 @@ void setup() {
   if (activeSensor >= sensorCount && sensorCount > 0) activeSensor = 0;
 
   WiFi.mode(WIFI_AP_STA);
-  WiFi.softAP("ESP32_Thermostat_Config", "12345678");
+  WiFi.softAP(unitName.c_str());
 
   if (ssid.length() > 0) {
     WiFi.begin(ssid.c_str(), password.c_str());
