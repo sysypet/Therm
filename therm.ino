@@ -456,24 +456,24 @@ void handleWifiConfig() {
   html += "</div>";
 
   html += "<div class='sensor-box'><h3>Relé Kimenetek</h3>";
-  html += "<style>.relay-led{width:8px;height:8px;border-radius:50%;background:#555;transition:0.1s;margin-left:auto;}</style>";
+  html += "<style>.relay-led{width:8px;height:8px;border-radius:50%;background:#555;transition:0.1s;margin-left:auto;}.gpio-btn{font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;user-select:none;padding:0;border:none;background:none;display:flex;align-items:center;}</style>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;user-select:none;' onmousedown='activateRelay(0)' onmouseup='deactivateRelay(0)' ontouchstart='activateRelay(0)' ontouchend='deactivateRelay(0)' onmouseleave='deactivateRelay(0)'>GPIO5</span>";
+  html += "<button class='gpio-btn' id='gpioBtn0'>GPIO5</button>";
   html += "<input type='text' class='sensor-name-input' id='relay0name' value='" + relayName0 + "' maxlength='16' onchange=\"updateRelayName(0, this.value)\" style='flex:1;'>";
   html += "<div class='relay-led' id='relayLed0'></div>";
   html += "</div>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;user-select:none;' onmousedown='activateRelay(1)' onmouseup='deactivateRelay(1)' ontouchstart='activateRelay(1)' ontouchend='deactivateRelay(1)' onmouseleave='deactivateRelay(1)'>GPIO6</span>";
+  html += "<button class='gpio-btn' id='gpioBtn1'>GPIO6</button>";
   html += "<input type='text' class='sensor-name-input' id='relay1name' value='" + relayName1 + "' maxlength='16' onchange=\"updateRelayName(1, this.value)\" style='flex:1;'>";
   html += "<div class='relay-led' id='relayLed1'></div>";
   html += "</div>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;user-select:none;' onmousedown='activateRelay(2)' onmouseup='deactivateRelay(2)' ontouchstart='activateRelay(2)' ontouchend='deactivateRelay(2)' onmouseleave='deactivateRelay(2)'>GPIO7</span>";
+  html += "<button class='gpio-btn' id='gpioBtn2'>GPIO7</button>";
   html += "<input type='text' class='sensor-name-input' id='relay2name' value='" + relayName2 + "' maxlength='16' onchange=\"updateRelayName(2, this.value)\" style='flex:1;'>";
   html += "<div class='relay-led' id='relayLed2'></div>";
   html += "</div>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;user-select:none;' onmousedown='activateRelay(3)' onmouseup='deactivateRelay(3)' ontouchstart='activateRelay(3)' ontouchend='deactivateRelay(3)' onmouseleave='deactivateRelay(3)'>GPIO10</span>";
+  html += "<button class='gpio-btn' id='gpioBtn3'>GPIO10</button>";
   html += "<input type='text' class='sensor-name-input' id='relay3name' value='" + relayName3 + "' maxlength='16' onchange=\"updateRelayName(3, this.value)\" style='flex:1;'>";
   html += "<div class='relay-led' id='relayLed3'></div>";
   html += "</div>";
@@ -516,6 +516,7 @@ void handleWifiConfig() {
   html += "function updateRelayName(idx,val){fetch('/set-relay-name?idx='+idx+'&name='+encodeURIComponent(val)).catch(()=>{});}";
   html += "function activateRelay(idx){fetch('/relay-on?idx='+idx).catch(()=>{});let led=document.getElementById('relayLed'+idx);if(led)led.style.background='#ff5e62';}";
   html += "function deactivateRelay(idx){fetch('/relay-off?idx='+idx).catch(()=>{});let led=document.getElementById('relayLed'+idx);if(led)led.style.background='#555';}";
+  html += "for(let i=0;i<4;i++){let btn=document.getElementById('gpioBtn'+i);if(btn){btn.addEventListener('mousedown',()=>activateRelay(i));btn.addEventListener('mouseup',()=>deactivateRelay(i));btn.addEventListener('touchstart',()=>activateRelay(i));btn.addEventListener('touchend',()=>deactivateRelay(i));btn.addEventListener('mouseleave',()=>deactivateRelay(i));}}";
 
   html += "function toggleMode(){";
   html += "fetch('/toggle-relay-mode').then(r=>r.text()).then(mode=>{";
