@@ -8,7 +8,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>  // WATCHDOG: Task WDT header
 
-#define FW_VERSION "2.5.6"  // Firmware verzió – 4 relay kimenet (GPIO5, GPIO6, GPIO7, GPIO10)
+#define FW_VERSION "2.5.7"  // Firmware verzió – 4 relay kimenet (GPIO5, GPIO6, GPIO7, GPIO10)
 
 #define RELAY_HEAT_PIN 5   // Fűtés relay
 #define RELAY_COOL_PIN 6   // Hűtés relay
@@ -456,7 +456,7 @@ void handleWifiConfig() {
   html += "</div>";
 
   html += "<div class='sensor-box'><h3>Relé Kimenetek</h3>";
-  html += "<style>.relay-led{width:8px;height:8px;border-radius:50%;background:#555;transition:0.1s;margin-left:auto;}.gpio-btn{font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;user-select:none;padding:0;border:none;background:none;display:flex;align-items:center;}</style>";
+  html += "<style>.relay-led{width:8px;height:8px;border-radius:50%;background:#555;transition:0.1s;margin-left:auto;}.gpio-btn{font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;user-select:none;padding:0;border:none;background:none;display:flex;align-items:center;justify-content:center;height:44px;}</style>";
   html += "<div class='sensor-row'>";
   html += "<button class='gpio-btn' id='gpioBtn0'>GPIO5</button>";
   html += "<input type='text' class='sensor-name-input' id='relay0name' value='" + relayName0 + "' maxlength='16' onchange=\"updateRelayName(0, this.value)\" style='flex:1;'>";
@@ -516,7 +516,7 @@ void handleWifiConfig() {
   html += "function updateRelayName(idx,val){fetch('/set-relay-name?idx='+idx+'&name='+encodeURIComponent(val)).catch(()=>{});}";
   html += "function activateRelay(idx){fetch('/relay-on?idx='+idx).catch(()=>{});let led=document.getElementById('relayLed'+idx);if(led)led.style.background='#ff5e62';}";
   html += "function deactivateRelay(idx){fetch('/relay-off?idx='+idx).catch(()=>{});let led=document.getElementById('relayLed'+idx);if(led)led.style.background='#555';}";
-  html += "for(let i=0;i<4;i++){let btn=document.getElementById('gpioBtn'+i);if(btn){btn.addEventListener('mousedown',()=>activateRelay(i));btn.addEventListener('mouseup',()=>deactivateRelay(i));btn.addEventListener('touchstart',()=>activateRelay(i));btn.addEventListener('touchend',()=>deactivateRelay(i));btn.addEventListener('mouseleave',()=>deactivateRelay(i));}}";
+  html += "for(let i=0;i<4;i++){let btn=document.getElementById('gpioBtn'+i);if(btn){(function(idx){btn.addEventListener('mousedown',()=>activateRelay(idx));btn.addEventListener('mouseup',()=>deactivateRelay(idx));btn.addEventListener('touchstart',()=>activateRelay(idx));btn.addEventListener('touchend',()=>deactivateRelay(idx));btn.addEventListener('mouseleave',()=>deactivateRelay(idx));})(i);}}";
 
   html += "function toggleMode(){";
   html += "fetch('/toggle-relay-mode').then(r=>r.text()).then(mode=>{";
