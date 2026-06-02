@@ -802,11 +802,9 @@ void handleIp() {
 
 void handleFirmwareUpload() {
   HTTPUpload& upload = server.upload();
-  static uint32_t updateSize = 0;
 
   if (upload.status == UPLOAD_FILE_START) {
-    updateSize = upload.contentLength;
-    if (!Update.begin(updateSize, U_FLASH)) {
+    if (!Update.begin(UPDATE_SIZE_UNKNOWN, U_FLASH)) {
       server.send(500, "text/plain", "Update error");
       return;
     }
