@@ -456,45 +456,38 @@ void handleWifiConfig() {
   html += "</div>";
 
   html += "<div class='sensor-box'><h3>Relé Kimenetek</h3>";
-  html += "<style>.relay-status{width:8px;height:8px;border-radius:50%;transition:all 0.1s;}.relay-status.active{background:#ff5e62;}.relay-status.inactive{background:#555;}</style>";
+  html += "<style>.relay-status{width:8px;height:8px;border-radius:50%;transition:all 0.1s;}.relay-status.active{background:#ff5e62;}.relay-status.inactive{background:#555;}.gpio-label{font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;user-select:none;}</style>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;' onmousedown='activateRelay(0)' onmouseup='deactivateRelay(0)' ontouchstart='activateRelay(0)' ontouchend='deactivateRelay(0)' onmouseleave='deactivateRelay(0)'>GPIO5</span>";
+  html += "<div class='gpio-label' onmousedown='activateRelay(0)' onmouseup='deactivateRelay(0)' ontouchstart='activateRelay(0)' ontouchend='deactivateRelay(0)' onmouseleave='deactivateRelay(0)'>GPIO5</div>";
   html += "<input type='text' class='sensor-name-input' id='relay0name' value='" + relayName0 + "' maxlength='16' onchange=\"updateRelayName(0, this.value)\" style='flex:1;'>";
   html += "<div class='relay-status inactive' id='relayStatus0'></div>";
   html += "</div>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;' onmousedown='activateRelay(1)' onmouseup='deactivateRelay(1)' ontouchstart='activateRelay(1)' ontouchend='deactivateRelay(1)' onmouseleave='deactivateRelay(1)'>GPIO6</span>";
+  html += "<div class='gpio-label' onmousedown='activateRelay(1)' onmouseup='deactivateRelay(1)' ontouchstart='activateRelay(1)' ontouchend='deactivateRelay(1)' onmouseleave='deactivateRelay(1)'>GPIO6</div>";
   html += "<input type='text' class='sensor-name-input' id='relay1name' value='" + relayName1 + "' maxlength='16' onchange=\"updateRelayName(1, this.value)\" style='flex:1;'>";
   html += "<div class='relay-status inactive' id='relayStatus1'></div>";
   html += "</div>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;' onmousedown='activateRelay(2)' onmouseup='deactivateRelay(2)' ontouchstart='activateRelay(2)' ontouchend='deactivateRelay(2)' onmouseleave='deactivateRelay(2)'>GPIO7</span>";
+  html += "<div class='gpio-label' onmousedown='activateRelay(2)' onmouseup='deactivateRelay(2)' ontouchstart='activateRelay(2)' ontouchend='deactivateRelay(2)' onmouseleave='deactivateRelay(2)'>GPIO7</div>";
   html += "<input type='text' class='sensor-name-input' id='relay2name' value='" + relayName2 + "' maxlength='16' onchange=\"updateRelayName(2, this.value)\" style='flex:1;'>";
   html += "<div class='relay-status inactive' id='relayStatus2'></div>";
   html += "</div>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;cursor:pointer;' onmousedown='activateRelay(3)' onmouseup='deactivateRelay(3)' ontouchstart='activateRelay(3)' ontouchend='deactivateRelay(3)' onmouseleave='deactivateRelay(3)'>GPIO10</span>";
+  html += "<div class='gpio-label' onmousedown='activateRelay(3)' onmouseup='deactivateRelay(3)' ontouchstart='activateRelay(3)' ontouchend='deactivateRelay(3)' onmouseleave='deactivateRelay(3)'>GPIO10</div>";
   html += "<input type='text' class='sensor-name-input' id='relay3name' value='" + relayName3 + "' maxlength='16' onchange=\"updateRelayName(3, this.value)\" style='flex:1;'>";
   html += "<div class='relay-status inactive' id='relayStatus3'></div>";
   html += "</div>";
   html += "</div>";
 
-  html += "<div class='sensor-box'><h3>Üzemmód és Hiszterézis</h3>";
+  html += "<div class='sensor-box'><h3>Üzemmód</h3>";
   html += "<div style='display:flex; gap:10px; margin-bottom:15px;'>";
   html += "<button type='button' id='modeToggleBtn' onclick='toggleMode()' style='margin-top:0; background:" + modeBg + "; color:#fff; flex:1;'>" + modeLabel + "</button>";
-  html += "</div>";
+  html += "</div></div>";
+
+  html += "<div class='sensor-box'><h3>Hiszterézis</h3>";
   html += "<div class='input-group'><label>Hiszterézis (°C)</label>";
   html += "<input type='text' id='hysteresisInput' value='" + String(hysteresis, 1) + "' style='text-align:center;'>";
   html += "</div></div>";
-
-  html += "<div class='sensor-box'><h3>Wi-Fi Hálózat</h3>";
-  html += "<div class='info-text'>Válassz hálózatot vagy add meg kézzel.</div>";
-  html += "<div class='network-list' id='networks'><div class='scanning'>Hálózatok keresése...</div></div>";
-  html += "<div class='input-group'><label>Hálózat neve (SSID)</label><input type='text' id='ssid' value='" + savedSsid + "'></div>";
-  html += "<div class='input-group'><label>Jelszó</label><input type='password' id='password' value='" + savedPass + "'></div>";
-  html += "</div>";
-
-  html += "<button type='button' onclick='saveConfig()' style='background:#1a7a4a;color:#fff;margin-bottom:10px;'>Mentés és Újraindítás</button>";
 
   html += "<div class='sensor-box'><h3>Firmware Frissítés</h3>";
   html += "<div style='font-size:0.9rem;color:#707075;margin-bottom:15px;'>Jelenlegi verzió: <strong style='color:#00d2ff;'>v" + String(FW_VERSION) + "</strong></div>";
@@ -504,6 +497,14 @@ void handleWifiConfig() {
   html += "<div id='uploadStatus' style='font-size:0.85rem;color:#707075;margin-top:10px;text-align:center;'></div>";
   html += "</div>";
 
+  html += "<div class='sensor-box'><h3>Wi-Fi Hálózat</h3>";
+  html += "<div class='info-text'>Válassz hálózatot vagy add meg kézzel.</div>";
+  html += "<div class='network-list' id='networks'><div class='scanning'>Hálózatok keresése...</div></div>";
+  html += "<div class='input-group'><label>Hálózat neve (SSID)</label><input type='text' id='ssid' value='" + savedSsid + "'></div>";
+  html += "<div class='input-group'><label>Jelszó</label><input type='password' id='password' value='" + savedPass + "'></div>";
+  html += "</div>";
+
+  html += "<button type='button' onclick='saveConfig()' style='background:#1a7a4a;color:#fff;margin-bottom:10px;'>Mentés és Újraindítás</button>";
   html += "<button type='button' onclick=\"location.href='/'\" style='background:#2e2e36;color:#d0d0d5;margin-bottom:10px;width:100%;padding:12px;border:none;border-radius:8px;cursor:pointer;font-size:1rem;transition:all 0.15s ease;'>Mégse</button>";
 
   html += "</div>";
@@ -881,7 +882,7 @@ void setup() {
   if (activeSensor >= sensorCount && sensorCount > 0) activeSensor = 0;
 
   WiFi.mode(WIFI_AP_STA);
-  WiFi.softAP(unitName.c_str());
+  WiFi.softAP("Therm");
 
   if (ssid.length() > 0) {
     WiFi.begin(ssid.c_str(), password.c_str());
