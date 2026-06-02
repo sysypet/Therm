@@ -455,22 +455,22 @@ void handleWifiConfig() {
 
   html += "</div>";
 
-  html += "<div class='sensor-box'><h3>Relé Kimenetek</h3>";
+  html += "<div class='sensor-box'><h3 style='text-align:center;'>Relé Kimenetek</h3>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;'>GPIO5</span>";
-  html += "<input type='text' class='sensor-name-input' id='relay0name' value='" + relayName0 + "' maxlength='16' onchange=\"updateRelayName(0, this.value)\" style='flex:1;'>";
+  html += "<button type='button' class='relay-btn' id='relayBtn0' style='background:#ff5e62;color:#fff;padding:8px 12px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.85rem;flex-shrink:0;' onmousedown='activateRelay(0)' onmouseup='deactivateRelay(0)' ontouchstart='activateRelay(0)' ontouchend='deactivateRelay(0)' onmouseleave='deactivateRelay(0)'>GPIO5</button>";
+  html += "<input type='text' class='sensor-name-input' id='relay0name' value='" + relayName0 + "' maxlength='16' onchange=\"updateRelayName(0, this.value)\" style='flex:1;margin-left:8px;'>";
   html += "</div>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;'>GPIO6</span>";
-  html += "<input type='text' class='sensor-name-input' id='relay1name' value='" + relayName1 + "' maxlength='16' onchange=\"updateRelayName(1, this.value)\" style='flex:1;'>";
+  html += "<button type='button' class='relay-btn' id='relayBtn1' style='background:#3cc8ff;color:#121214;padding:8px 12px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.85rem;flex-shrink:0;' onmousedown='activateRelay(1)' onmouseup='deactivateRelay(1)' ontouchstart='activateRelay(1)' ontouchend='deactivateRelay(1)' onmouseleave='deactivateRelay(1)'>GPIO6</button>";
+  html += "<input type='text' class='sensor-name-input' id='relay1name' value='" + relayName1 + "' maxlength='16' onchange=\"updateRelayName(1, this.value)\" style='flex:1;margin-left:8px;'>";
   html += "</div>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;'>GPIO7</span>";
-  html += "<input type='text' class='sensor-name-input' id='relay2name' value='" + relayName2 + "' maxlength='16' onchange=\"updateRelayName(2, this.value)\" style='flex:1;'>";
+  html += "<button type='button' class='relay-btn' id='relayBtn2' style='background:#f0c040;color:#121214;padding:8px 12px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.85rem;flex-shrink:0;' onmousedown='activateRelay(2)' onmouseup='deactivateRelay(2)' ontouchstart='activateRelay(2)' ontouchend='deactivateRelay(2)' onmouseleave='deactivateRelay(2)'>GPIO7</button>";
+  html += "<input type='text' class='sensor-name-input' id='relay2name' value='" + relayName2 + "' maxlength='16' onchange=\"updateRelayName(2, this.value)\" style='flex:1;margin-left:8px;'>";
   html += "</div>";
   html += "<div class='sensor-row'>";
-  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;'>GPIO10</span>";
-  html += "<input type='text' class='sensor-name-input' id='relay3name' value='" + relayName3 + "' maxlength='16' onchange=\"updateRelayName(3, this.value)\" style='flex:1;'>";
+  html += "<button type='button' class='relay-btn' id='relayBtn3' style='background:#a04090;color:#fff;padding:8px 12px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.85rem;flex-shrink:0;' onmousedown='activateRelay(3)' onmouseup='deactivateRelay(3)' ontouchstart='activateRelay(3)' ontouchend='deactivateRelay(3)' onmouseleave='deactivateRelay(3)'>GPIO10</button>";
+  html += "<input type='text' class='sensor-name-input' id='relay3name' value='" + relayName3 + "' maxlength='16' onchange=\"updateRelayName(3, this.value)\" style='flex:1;margin-left:8px;'>";
   html += "</div>";
   html += "</div>";
 
@@ -509,6 +509,8 @@ void handleWifiConfig() {
   html += "function selectSensor(idx){fetch('/set-active-sensor?idx='+idx).catch(()=>{});}";
   html += "function updateSensorName(idx,val){fetch('/set-sensor-name?idx='+idx+'&name='+encodeURIComponent(val)).catch(()=>{});}";
   html += "function updateRelayName(idx,val){fetch('/set-relay-name?idx='+idx+'&name='+encodeURIComponent(val)).catch(()=>{});}";
+  html += "function activateRelay(idx){fetch('/relay-on?idx='+idx).catch(()=>{});}";
+  html += "function deactivateRelay(idx){fetch('/relay-off?idx='+idx).catch(()=>{});}";
 
   html += "function toggleMode(){";
   html += "fetch('/toggle-relay-mode').then(r=>r.text()).then(mode=>{";
@@ -698,6 +700,28 @@ void handleSetRelayName() {
   server.send(200, "text/plain", "OK");
 }
 
+void handleRelayOn() {
+  if (server.hasArg("idx")) {
+    int idx = server.arg("idx").toInt();
+    int pins[] = {RELAY_HEAT_PIN, RELAY_COOL_PIN, RELAY3_PIN, RELAY4_PIN};
+    if (idx >= 0 && idx < 4) {
+      digitalWrite(pins[idx], HIGH);
+    }
+  }
+  server.send(200, "text/plain", "OK");
+}
+
+void handleRelayOff() {
+  if (server.hasArg("idx")) {
+    int idx = server.arg("idx").toInt();
+    int pins[] = {RELAY_HEAT_PIN, RELAY_COOL_PIN, RELAY3_PIN, RELAY4_PIN};
+    if (idx >= 0 && idx < 4) {
+      digitalWrite(pins[idx], LOW);
+    }
+  }
+  server.send(200, "text/plain", "OK");
+}
+
 void handleGetAllTemps() {
   String json = "{";
   json += "\"count\":" + String(sensorCount) + ",";
@@ -819,6 +843,8 @@ void setup() {
   server.on("/set-active-sensor", HTTP_GET, handleSetActiveSensor);
   server.on("/set-sensor-name", HTTP_GET, handleSetSensorName);
   server.on("/set-relay-name", HTTP_GET, handleSetRelayName);
+  server.on("/relay-on", HTTP_GET, handleRelayOn);
+  server.on("/relay-off", HTTP_GET, handleRelayOff);
   server.on("/get-all-temps", HTTP_GET, handleGetAllTemps);
   server.on("/get-sensor-names", HTTP_GET, handleGetSensorNames);
   server.on("/search-sensors", HTTP_GET, handleSearchSensors);
