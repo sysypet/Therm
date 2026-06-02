@@ -12,6 +12,8 @@
 
 #define RELAY_HEAT_PIN 5   // Fűtés relay
 #define RELAY_COOL_PIN 6   // Hűtés relay
+#define RELAY3_PIN 7       // Relay 3
+#define RELAY4_PIN 10      // Relay 4
 #define STATUS_LED_PIN  8   // Státusz LED (LOW=aktív, HIGH=inaktív)
 #define ONE_WIRE_BUS 4
 
@@ -53,6 +55,10 @@ String sensorName0 = "1. hőmérő";
 String sensorName1 = "2. hőmérő";
 String sensorName2 = "3. hőmérő";
 String sensorName3 = "4. hőmérő";
+String relayName0 = "Fűtés";
+String relayName1 = "Hűtés";
+String relayName2 = "Relay3";
+String relayName3 = "Relay4";
 String unitName = "ESP32_Thermostat";
 
 const char index_html[] PROGMEM = R"rawliteral(
@@ -449,6 +455,25 @@ void handleWifiConfig() {
 
   html += "</div>";
 
+  html += "<div class='sensor-box'><h3>Relé Kimenetek</h3>";
+  html += "<div class='sensor-row'>";
+  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;'>GPIO5</span>";
+  html += "<input type='text' class='sensor-name-input' id='relay0name' value='" + relayName0 + "' maxlength='16' onchange=\"updateRelayName(0, this.value)\" style='flex:1;'>";
+  html += "</div>";
+  html += "<div class='sensor-row'>";
+  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;'>GPIO6</span>";
+  html += "<input type='text' class='sensor-name-input' id='relay1name' value='" + relayName1 + "' maxlength='16' onchange=\"updateRelayName(1, this.value)\" style='flex:1;'>";
+  html += "</div>";
+  html += "<div class='sensor-row'>";
+  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;'>GPIO7</span>";
+  html += "<input type='text' class='sensor-name-input' id='relay2name' value='" + relayName2 + "' maxlength='16' onchange=\"updateRelayName(2, this.value)\" style='flex:1;'>";
+  html += "</div>";
+  html += "<div class='sensor-row'>";
+  html += "<span style='font-size:0.9rem;color:#a0a0a5;font-weight:bold;width:60px;'>GPIO10</span>";
+  html += "<input type='text' class='sensor-name-input' id='relay3name' value='" + relayName3 + "' maxlength='16' onchange=\"updateRelayName(3, this.value)\" style='flex:1;'>";
+  html += "</div>";
+  html += "</div>";
+
   html += "<div class='sensor-box'><h3>Üzemmód és Hiszterézis</h3>";
   html += "<div style='display:flex; gap:10px; margin-bottom:15px;'>";
   html += "<button type='button' id='modeToggleBtn' onclick='toggleMode()' style='margin-top:0; background:" + modeBg + "; color:#fff; flex:1;'>" + modeLabel + "</button>";
@@ -483,6 +508,7 @@ void handleWifiConfig() {
 
   html += "function selectSensor(idx){fetch('/set-active-sensor?idx='+idx).catch(()=>{});}";
   html += "function updateSensorName(idx,val){fetch('/set-sensor-name?idx='+idx+'&name='+encodeURIComponent(val)).catch(()=>{});}";
+  html += "function updateRelayName(idx,val){fetch('/set-relay-name?idx='+idx+'&name='+encodeURIComponent(val)).catch(()=>{});}";
 
   html += "function toggleMode(){";
   html += "fetch('/toggle-relay-mode').then(r=>r.text()).then(mode=>{";
@@ -656,6 +682,22 @@ void handleSetSensorName() {
   server.send(200, "text/plain", "OK");
 }
 
+void handleSetRelayName() {
+  if (server.hasArg("idx") && server.hasArg("name")) {
+    int idx = server.arg("idx").toInt();
+    String name = server.arg("name");
+    if (name.length() > 0 && name.length() <= 16) {
+      preferences.begin("relay-names", false);
+      if (idx == 0) { relayName0 = name; preferences.putString("rname0", name); }
+      else if (idx == 1) { relayName1 = name; preferences.putString("rname1", name); }
+      else if (idx == 2) { relayName2 = name; preferences.putString("rname2", name); }
+      else if (idx == 3) { relayName3 = name; preferences.putString("rname3", name); }
+      preferences.end();
+    }
+  }
+  server.send(200, "text/plain", "OK");
+}
+
 void handleGetAllTemps() {
   String json = "{";
   json += "\"count\":" + String(sensorCount) + ",";
@@ -686,9 +728,13 @@ void handleIp() {
 void setup() {
   pinMode(RELAY_HEAT_PIN, OUTPUT);
   pinMode(RELAY_COOL_PIN, OUTPUT);
+  pinMode(RELAY3_PIN, OUTPUT);
+  pinMode(RELAY4_PIN, OUTPUT);
   pinMode(STATUS_LED_PIN, OUTPUT);
   digitalWrite(RELAY_HEAT_PIN, LOW);
   digitalWrite(RELAY_COOL_PIN, LOW);
+  digitalWrite(RELAY3_PIN, LOW);
+  digitalWrite(RELAY4_PIN, LOW);
   digitalWrite(STATUS_LED_PIN, HIGH);
 
   esp_task_wdt_config_t wdt_config = {
@@ -719,6 +765,13 @@ void setup() {
   sensorName1 = preferences.getString("name1", "2. hőmérő");
   sensorName2 = preferences.getString("name2", "3. hőmérő");
   sensorName3 = preferences.getString("name3", "4. hőmérő");
+  preferences.end();
+
+  preferences.begin("relay-names", true);
+  relayName0 = preferences.getString("rname0", "Fűtés");
+  relayName1 = preferences.getString("rname1", "Hűtés");
+  relayName2 = preferences.getString("rname2", "Relay3");
+  relayName3 = preferences.getString("rname3", "Relay4");
   preferences.end();
 
   sensors.begin();
@@ -765,6 +818,7 @@ void setup() {
   server.on("/toggle-relay-mode", HTTP_GET, handleToggleRelayMode);
   server.on("/set-active-sensor", HTTP_GET, handleSetActiveSensor);
   server.on("/set-sensor-name", HTTP_GET, handleSetSensorName);
+  server.on("/set-relay-name", HTTP_GET, handleSetRelayName);
   server.on("/get-all-temps", HTTP_GET, handleGetAllTemps);
   server.on("/get-sensor-names", HTTP_GET, handleGetSensorNames);
   server.on("/search-sensors", HTTP_GET, handleSearchSensors);
