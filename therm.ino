@@ -510,7 +510,7 @@ void handleWifiConfig() {
   html += "<button type='button' onclick='saveConfig()' style='background:#1a7a4a;color:#fff;margin-bottom:10px;'>Mentés és Újraindítás</button>";
 
   html += "<div class='sensor-box'><h3>Firmware Frissítés</h3>";
-  html += "<div style='font-size:0.9rem;color:#707075;margin-bottom:15px;'>Jelenlegi verzió: <strong style='color:#00d2ff;'>v" + FW_VERSION + "</strong></div>";
+  html += "<div style='font-size:0.9rem;color:#707075;margin-bottom:15px;'>Jelenlegi verzió: <strong style='color:#00d2ff;'>v" + String(FW_VERSION) + "</strong></div>";
   html += "<input type='file' id='firmwareFile' accept='.bin' style='display:none;'>";
   html += "<button type='button' onclick='document.getElementById(\"firmwareFile\").click()' style='width:100%;padding:12px;background:#ff5e62;border:none;color:#fff;font-weight:bold;border-radius:8px;margin-bottom:10px;cursor:pointer;font-size:1rem;transition:all 0.15s ease;'>Firmware Fájl Kiválasztása</button>";
   html += "<button type='button' id='uploadBtn' onclick='uploadFirmware()' style='width:100%;padding:12px;background:#00d2ff;border:none;color:#121214;font-weight:bold;border-radius:8px;cursor:pointer;font-size:1rem;transition:all 0.15s ease;display:none;'>Frissítés Megkezdése</button>";
