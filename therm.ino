@@ -8,7 +8,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>  // WATCHDOG: Task WDT header
 
-#define FW_VERSION "2.5.0"  // Firmware verzió – 4 relay kimenet (GPIO5, GPIO6, GPIO7, GPIO10)
+#define FW_VERSION "2.5.1"  // Firmware verzió – 4 relay kimenet (GPIO5, GPIO6, GPIO7, GPIO10)
 
 #define RELAY_HEAT_PIN 5   // Fűtés relay
 #define RELAY_COOL_PIN 6   // Hűtés relay
@@ -462,7 +462,7 @@ void handleWifiConfig() {
   html += ".relay-btn{background:#ff5e62;color:#fff;padding:8px 12px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.85rem;flex-shrink:0;transition:all 0.15s;-webkit-user-select:none;user-select:none;min-width:65px;text-align:center;}";
   html += ".relay-btn:active{transform:translate(1px,1px);}";
   html += ".relay-status{width:12px;height:12px;border-radius:50%;flex-shrink:0;transition:all 0.1s;}";
-  html += ".relay-status.active{background:#00ff00;box-shadow:0 0 8px rgba(0,255,0,0.6);}";
+  html += ".relay-status.active{background:#ff5e62;box-shadow:0 0 8px rgba(255,94,98,0.6);}";
   html += ".relay-status.inactive{background:#555;box-shadow:none;}";
   html += ".relay-input-wrapper{flex:1;display:flex;align-items:center;gap:8px;min-width:0;}";
   html += "</style>";
@@ -470,25 +470,25 @@ void handleWifiConfig() {
   html += "<button type='button' class='relay-btn' id='relayBtn0' style='background:#ff5e62;' onmousedown='activateRelay(0)' onmouseup='deactivateRelay(0)' ontouchstart='activateRelay(0)' ontouchend='deactivateRelay(0)' onmouseleave='deactivateRelay(0)'>GPIO5</button>";
   html += "<div class='relay-input-wrapper'>";
   html += "<input type='text' class='sensor-name-input' id='relay0name' value='" + relayName0 + "' maxlength='16' onchange=\"updateRelayName(0, this.value)\" style='flex:1;margin-left:0;'>";
-  html += "<div class='relay-status inactive' id='relayStatus0' title='Inaktív'></div>";
+  html += "<div class='relay-status inactive' id='relayStatus0'></div>";
   html += "</div></div>";
   html += "<div class='relay-row'>";
   html += "<button type='button' class='relay-btn' id='relayBtn1' style='background:#3cc8ff;color:#121214;' onmousedown='activateRelay(1)' onmouseup='deactivateRelay(1)' ontouchstart='activateRelay(1)' ontouchend='deactivateRelay(1)' onmouseleave='deactivateRelay(1)'>GPIO6</button>";
   html += "<div class='relay-input-wrapper'>";
   html += "<input type='text' class='sensor-name-input' id='relay1name' value='" + relayName1 + "' maxlength='16' onchange=\"updateRelayName(1, this.value)\" style='flex:1;margin-left:0;'>";
-  html += "<div class='relay-status inactive' id='relayStatus1' title='Inaktív'></div>";
+  html += "<div class='relay-status inactive' id='relayStatus1'></div>";
   html += "</div></div>";
   html += "<div class='relay-row'>";
   html += "<button type='button' class='relay-btn' id='relayBtn2' style='background:#f0c040;color:#121214;' onmousedown='activateRelay(2)' onmouseup='deactivateRelay(2)' ontouchstart='activateRelay(2)' ontouchend='deactivateRelay(2)' onmouseleave='deactivateRelay(2)'>GPIO7</button>";
   html += "<div class='relay-input-wrapper'>";
   html += "<input type='text' class='sensor-name-input' id='relay2name' value='" + relayName2 + "' maxlength='16' onchange=\"updateRelayName(2, this.value)\" style='flex:1;margin-left:0;'>";
-  html += "<div class='relay-status inactive' id='relayStatus2' title='Inaktív'></div>";
+  html += "<div class='relay-status inactive' id='relayStatus2'></div>";
   html += "</div></div>";
   html += "<div class='relay-row'>";
   html += "<button type='button' class='relay-btn' id='relayBtn3' style='background:#a04090;color:#fff;' onmousedown='activateRelay(3)' onmouseup='deactivateRelay(3)' ontouchstart='activateRelay(3)' ontouchend='deactivateRelay(3)' onmouseleave='deactivateRelay(3)'>GPIO10</button>";
   html += "<div class='relay-input-wrapper'>";
   html += "<input type='text' class='sensor-name-input' id='relay3name' value='" + relayName3 + "' maxlength='16' onchange=\"updateRelayName(3, this.value)\" style='flex:1;margin-left:0;'>";
-  html += "<div class='relay-status inactive' id='relayStatus3' title='Inaktív'></div>";
+  html += "<div class='relay-status inactive' id='relayStatus3'></div>";
   html += "</div></div>";
   html += "</div>";
 
@@ -508,7 +508,16 @@ void handleWifiConfig() {
   html += "</div>";
 
   html += "<button type='button' onclick='saveConfig()' style='background:#1a7a4a;color:#fff;margin-bottom:10px;'>Mentés és Újraindítás</button>";
-  html += "<button type='button' onclick=\"location.href='/'\" style='background:#2e2e36;color:#d0d0d5;margin-top:5px;'>Mégse</button>";
+
+  html += "<div class='sensor-box'><h3>Firmware Frissítés</h3>";
+  html += "<div style='font-size:0.9rem;color:#707075;margin-bottom:15px;'>Jelenlegi verzió: <strong style='color:#00d2ff;'>v" + FW_VERSION + "</strong></div>";
+  html += "<input type='file' id='firmwareFile' accept='.bin' style='display:none;'>";
+  html += "<button type='button' onclick='document.getElementById(\"firmwareFile\").click()' style='width:100%;padding:12px;background:#ff5e62;border:none;color:#fff;font-weight:bold;border-radius:8px;margin-bottom:10px;cursor:pointer;font-size:1rem;transition:all 0.15s ease;'>Firmware Fájl Kiválasztása</button>";
+  html += "<button type='button' id='uploadBtn' onclick='uploadFirmware()' style='width:100%;padding:12px;background:#00d2ff;border:none;color:#121214;font-weight:bold;border-radius:8px;cursor:pointer;font-size:1rem;transition:all 0.15s ease;display:none;'>Frissítés Megkezdése</button>";
+  html += "<div id='uploadStatus' style='font-size:0.85rem;color:#707075;margin-top:10px;text-align:center;'></div>";
+  html += "</div>";
+
+  html += "<button type='button' onclick=\"location.href='/'\" style='background:#2e2e36;color:#d0d0d5;margin-bottom:10px;width:100%;padding:12px;border:none;border-radius:8px;cursor:pointer;font-size:1rem;transition:all 0.15s ease;'>Mégse</button>";
 
   html += "</div>";
 
@@ -530,12 +539,12 @@ void handleWifiConfig() {
   html += "function activateRelay(idx){";
   html += "fetch('/relay-on?idx='+idx).catch(()=>{});";
   html += "let status=document.getElementById('relayStatus'+idx);";
-  html += "if(status){status.classList.remove('inactive');status.classList.add('active');status.title='Aktív';}";
+  html += "if(status){status.classList.remove('inactive');status.classList.add('active');}";
   html += "}";
   html += "function deactivateRelay(idx){";
   html += "fetch('/relay-off?idx='+idx).catch(()=>{});";
   html += "let status=document.getElementById('relayStatus'+idx);";
-  html += "if(status){status.classList.remove('active');status.classList.add('inactive');status.title='Inaktív';}";
+  html += "if(status){status.classList.remove('active');status.classList.add('inactive');}";
   html += "}";
 
   html += "function toggleMode(){";
@@ -551,6 +560,22 @@ void handleWifiConfig() {
   html += "document.getElementById('sensorSearchStatus').innerText='Sikeres keresés! Oldal újratöltése...';";
   html += "setTimeout(()=>{location.reload();},1500);";
   html += "}).catch(()=>{btn.innerText='Hőmérők keresése';btn.disabled=false;});}";
+
+  html += "document.getElementById('firmwareFile').addEventListener('change',function(){";
+  html += "let uploadBtn=document.getElementById('uploadBtn');";
+  html += "uploadBtn.style.display=this.files.length>0?'block':'none';";
+  html += "});";
+
+  html += "function uploadFirmware(){";
+  html += "let file=document.getElementById('firmwareFile').files[0];";
+  html += "if(!file){alert('Kérjük válassz egy firmware fájlt!');return;}";
+  html += "let formData=new FormData();formData.append('firmware',file);";
+  html += "let statusDiv=document.getElementById('uploadStatus');";
+  html += "statusDiv.innerText='Feltöltés folyamatban...';";
+  html += "document.getElementById('uploadBtn').disabled=true;";
+  html += "fetch('/update',{method:'POST',body:formData})";
+  html += ".then(r=>{if(r.ok){statusDiv.innerHTML='<span style=\"color:#00ff00;\">Sikeres! Az eszköz újraindul...</span>';setTimeout(()=>{location.reload();},3000);}else{statusDiv.innerHTML='<span style=\"color:#ff5e62;\">Hiba: '+r.status+'</span>';document.getElementById('uploadBtn').disabled=false;}})";
+  html += ".catch(e=>{statusDiv.innerHTML='<span style=\"color:#ff5e62;\">Hálózati hiba!</span>';document.getElementById('uploadBtn').disabled=false;});}";
 
   html += "function saveConfig(){";
   html += "let s=document.getElementById('ssid').value;";
@@ -775,6 +800,32 @@ void handleIp() {
   server.send(200, "text/plain", ipStr + "|" + unitName + "|" + FW_VERSION);
 }
 
+void handleFirmwareUpload() {
+  HTTPUpload& upload = server.upload();
+  static uint32_t updateSize = 0;
+
+  if (upload.status == UPLOAD_FILE_START) {
+    updateSize = upload.contentLength;
+    if (!Update.begin(updateSize, U_FLASH)) {
+      server.send(500, "text/plain", "Update error");
+      return;
+    }
+  } else if (upload.status == UPLOAD_FILE_WRITE) {
+    if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+      server.send(500, "text/plain", "Write error");
+      return;
+    }
+  } else if (upload.status == UPLOAD_FILE_END) {
+    if (Update.end(true)) {
+      server.send(200, "text/plain", "OK");
+      shouldRestart = true;
+      restartTimer = millis();
+    } else {
+      server.send(500, "text/plain", "End error");
+    }
+  }
+}
+
 void setup() {
   pinMode(RELAY_HEAT_PIN, OUTPUT);
   pinMode(RELAY_COOL_PIN, OUTPUT);
@@ -875,6 +926,9 @@ void setup() {
   server.on("/get-sensor-names", HTTP_GET, handleGetSensorNames);
   server.on("/search-sensors", HTTP_GET, handleSearchSensors);
   server.on("/ip", HTTP_GET, handleIp);
+  server.on("/update", HTTP_POST, []() {
+    server.send(200, "text/plain", "");
+  }, handleFirmwareUpload);
 
   server.begin();
 }
