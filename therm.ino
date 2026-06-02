@@ -8,7 +8,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>  // WATCHDOG: Task WDT header
 
-#define FW_VERSION "2.5.8"  // Firmware verzió – 4 relay kimenet (GPIO5, GPIO6, GPIO7, GPIO10)
+#define FW_VERSION "2.5.9"  // Firmware verzió – 4 relay kimenet (GPIO5, GPIO6, GPIO7, GPIO10)
 
 #define RELAY_HEAT_PIN 5   // Fűtés relay
 #define RELAY_COOL_PIN 6   // Hűtés relay
@@ -59,7 +59,7 @@ String relayName0 = "Fűtés";
 String relayName1 = "Hűtés";
 String relayName2 = "Relay3";
 String relayName3 = "Relay4";
-String unitName = "ESP32_Thermostat";
+String unitName = "Therm";
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
