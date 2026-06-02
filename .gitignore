@@ -1,5 +1,5 @@
 # Verziózott artifact fájlok
-*_[0-9]*.[0-9]*.[0-9]*.ino
+therm-[0-9]*.[0-9]*.[0-9]*.ino
 
 # IDE
 .vscode/
