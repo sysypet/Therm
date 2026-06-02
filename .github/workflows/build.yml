@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - '**'
-  pull_request:
-    branches:
-      - '**'
 
 jobs:
   build:
@@ -34,9 +31,14 @@ jobs:
           path: therm-${{ steps.version.outputs.version }}.ino
           retention-days: 90
 
-      - name: Upload original firmware
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/claude/')
+        uses: softprops/action-gh-release@v1
         with:
-          name: therm-latest
-          path: therm.ino
-          retention-days: 30
+          files: therm-${{ steps.version.outputs.version }}.ino
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Therm v${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: ${{ !startsWith(github.ref, 'refs/heads/main') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
