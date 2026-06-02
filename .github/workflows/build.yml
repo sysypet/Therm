@@ -1,0 +1,42 @@
+name: Build Firmware
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep -oP '#define FW_VERSION "\K[^"]+' therm.ino)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Firmware verzió: $VERSION"
+
+      - name: Copy and rename firmware
+        run: |
+          cp therm.ino therm-${{ steps.version.outputs.version }}.ino
+          ls -lh therm-*.ino
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: therm-firmware-${{ steps.version.outputs.version }}
+          path: therm-${{ steps.version.outputs.version }}.ino
+          retention-days: 90
+
+      - name: Upload original firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: therm-latest
+          path: therm.ino
+          retention-days: 30

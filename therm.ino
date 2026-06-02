@@ -8,7 +8,7 @@
 #include <Update.h>
 #include <esp_task_wdt.h>  // WATCHDOG: Task WDT header
 
-#define FW_VERSION "2.5.1"  // Firmware verzió – 4 relay kimenet (GPIO5, GPIO6, GPIO7, GPIO10)
+#define FW_VERSION "2.5.2"  // Firmware verzió – 4 relay kimenet (GPIO5, GPIO6, GPIO7, GPIO10)
 
 #define RELAY_HEAT_PIN 5   // Fűtés relay
 #define RELAY_COOL_PIN 6   // Hűtés relay
